@@ -47,6 +47,11 @@ export type ValuationData = {
   areaMedianIncome?: number | null;
   pricePerSqft?: number | null;
   rentZestimate?: number | null;
+  beds?: number | null;
+  baths?: number | null;
+  sqft?: number | null;
+  yearBuilt?: number | null;
+  homeType?: string | null;
 };
 
 type Step = 1 | 2 | 3 | 4;
@@ -136,8 +141,8 @@ export default function HomeValuationFlow() {
         <p className="text-white/30 text-xs">
           © {new Date().getFullYear()} Chad Morton · Maverick Realty LLC ·
           VA License 0225203164 · (703) 203-6005 ·{" "}
-          <a href="mailto:chadmortonrealtor@gmail.com" className="hover:text-gold transition-colors">
-            chadmortonrealtor@gmail.com
+          <a href="mailto:ccurrie@ttrsir.com" className="hover:text-gold transition-colors">
+            ccurrie@ttrsir.com
           </a>
         </p>
         <p className="text-white/20 text-xs mt-1">
