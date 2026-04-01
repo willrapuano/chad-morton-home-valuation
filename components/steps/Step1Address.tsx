@@ -12,8 +12,6 @@ interface Suggestion { place_id: string; display_name: string; address: Record<s
 export default function Step1Address({ onSubmit }: Props) {
   const [value, setValue] = useState("");
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-  const [sqft, setSqft] = useState("");
-  const [showSqft, setShowSqft] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -55,18 +53,17 @@ export default function Step1Address({ onSubmit }: Props) {
     selectedRef.current = { full, streetNumber, streetName, city, state: stateAbbr, zipCode: zip, lat: parseFloat(s.lat), lng: parseFloat(s.lon) };
     setValue(full);
     setSuggestions([]);
-    setShowSqft(true);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSuggestions([]);
-    if (selectedRef.current) { onSubmit(selectedRef.current, sqft ? parseInt(sqft) : undefined); return; }
+    if (selectedRef.current) { onSubmit(selectedRef.current); return; }
     const val = value.trim();
     if (val.length < 10) { setError("Please enter your full address including city and state."); return; }
     const parts = val.split(",").map(s => s.trim());
     const sp = (parts[2] || "").split(" ").filter(Boolean);
-    onSubmit({ full: val, streetNumber: "", streetName: parts[0] || val, city: parts[1] || "", state: sp[0] || "", zipCode: sp[1] || "" }, sqft ? parseInt(sqft) : undefined);
+    onSubmit({ full: val, streetNumber: "", streetName: parts[0] || val, city: parts[1] || "", state: sp[0] || "", zipCode: sp[1] || "" });
   };
 
   return (
@@ -125,22 +122,7 @@ export default function Step1Address({ onSubmit }: Props) {
             <p className="text-white/30 text-xs mt-2 ml-1">Start typing — suggestions appear after 4 characters</p>
           </div>
 
-          {showSqft && (
-            <div>
-              <label htmlFor="sqft" className="block text-white/70 text-sm font-medium mb-2">Approximate Sq Ft <span className="text-white/30">(optional)</span></label>
-              <select id="sqft" value={sqft} onChange={e => setSqft(e.target.value)}
-                className="w-full bg-navy/60 border border-white/20 focus:border-gold rounded-xl px-4 py-3.5 text-white outline-none transition-all focus:ring-2 focus:ring-gold/30 text-sm appearance-none">
-                <option value="">Not sure</option>
-                <option value="800">Under 1,000 sqft</option>
-                <option value="1200">1,000 – 1,500 sqft</option>
-                <option value="1750">1,500 – 2,000 sqft</option>
-                <option value="2250">2,000 – 2,500 sqft</option>
-                <option value="2750">2,500 – 3,000 sqft</option>
-                <option value="3500">3,000 – 4,000 sqft</option>
-                <option value="4500">4,000+ sqft</option>
-              </select>
-            </div>
-          )}
+
 
           <button type="submit" className="w-full gold-gradient text-navy font-bold py-4 rounded-xl text-lg transition-all hover:opacity-90 hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-gold/20 mt-2">
             Get My Home Value →

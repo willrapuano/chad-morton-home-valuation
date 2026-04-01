@@ -30,7 +30,7 @@ function slugify(s: string) {
 async function fetchCensusAMI(zip: string): Promise<number | null> {
   try {
     const url = `https://api.census.gov/data/2022/acs/acs5?get=B19013_001E&for=zip+code+tabulation+area:${zip}&key=DEMO_KEY`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    const res = await fetch(url, {});
     if (!res.ok) return null;
     const data = await res.json();
     // Response format: [["B19013_001E","zip code tabulation area"], ["75000", "22101"]]
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
     const zenUrl = `https://api.zenrows.com/v1/?apikey=${ZENROWS_KEY}&url=${encodeURIComponent(zillowUrl)}&js_render=true&premium_proxy=true&wait=5000`;
 
     const [res] = await Promise.all([
-      fetch(zenUrl, { signal: AbortSignal.timeout(35000) }),
+      fetch(zenUrl),
     ]);
 
     areaMedianIncome = await amiPromise;
@@ -123,6 +123,22 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Extract Rent Zestimate
+    let rentZestimate: number | null = null;
+    const rentMatches = html.match(/[Rr]ent\s*[Zz]estimate[\s\S]{0,100}\$([\d,]+)/);
+    if (rentMatches) {
+      const rent = parseInt(rentMatches[1].replace(/,/g, ""));
+      if (rent > 500 && rent < 20000) rentZestimate = rent;
+    }
+    // Fallback: look for /mo pattern near rent context
+    if (!rentZestimate) {
+      const rentMoMatch = html.match(/\$([\d,]+)\/mo/);
+      if (rentMoMatch) {
+        const rent = parseInt(rentMoMatch[1].replace(/,/g, ""));
+        if (rent > 500 && rent < 20000) rentZestimate = rent;
+      }
+    }
+
     return NextResponse.json({
       estimate: zestimate,
       low,
@@ -134,6 +150,7 @@ export async function POST(req: NextRequest) {
       fmr: NOVA_FMR,
       areaMedianIncome,
       pricePerSqft,
+      rentZestimate,
     });
   } catch (err) {
     console.error("Zillow scrape error:", err);
@@ -141,3 +158,5 @@ export async function POST(req: NextRequest) {
     return zipFallback(zipCode, fullAddress, areaMedianIncome);
   }
 }
+
+export const maxDuration = 30;
