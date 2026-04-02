@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { AddressData, LeadData, ValuationData } from "../HomeValuationFlow";
 
 interface Props {
@@ -33,22 +34,25 @@ function ConfidenceBadge({ confidence }: { confidence: string }) {
 }
 
 export default function Step4Results({ address, valuation, lead, onStartOver }: Props) {
-  const CMA_URL = `mailto:chadmortonrealtor@gmail.com?subject=${encodeURIComponent(`Free CMA Request — ${address.full}`)}&body=${encodeURIComponent(`Hi Chad,\n\nI'd like to request a free CMA for ${address.full}.\n\nEmail: ${lead.email}\n\nThank you!`)}`;
+  const CMA_URL = `mailto:ccurrie@ttrsir.com?subject=${encodeURIComponent(`Free CMA Request — ${address.full}`)}&body=${encodeURIComponent(`Hi Candee,\n\nI'd like to request a free CMA for ${address.full}.\n\nEmail: ${lead.email}\n\nThank you!`)}`;
 
   const midpoint = valuation.estimate;
   const rangeSpread = valuation.high - valuation.low;
-  const midZipEstimate = 750000; // rough area median for % change calc
-  const valueChangePct = ((midpoint - midZipEstimate) / midZipEstimate) * 100;
+  // Use Census AMI for vs-median calc if available, otherwise hide
+  const areaMedian = valuation.areaMedianIncome;
+  // Price-to-income ratio: typical home ~4-5x income. Use 4.5x as proxy for median home value
+  const impliedMedianHomeValue = areaMedian ? areaMedian * 4.5 : null;
+  const valueChangePct = impliedMedianHomeValue
+    ? ((midpoint - impliedMedianHomeValue) / impliedMedianHomeValue) * 100
+    : null;
 
   const fmr = valuation.fmr ?? {
-    studio: 2050,
-    oneBr: 2080,
-    twoBr: 2370,
-    threeBr: 2960,
-    fourBr: 3540,
+    studio: 2050, oneBr: 2080, twoBr: 2370, threeBr: 2960, fourBr: 3540,
   };
 
-  const suggestedRent = fmr.threeBr;
+  // Use Zillow Rent Zestimate if available, otherwise fall back to HUD FMR 3BR
+  const suggestedRent = valuation.rentZestimate || fmr.threeBr;
+  const rentLabel = valuation.rentZestimate ? "Zillow Rent Zestimate" : "3BR HUD FMR";
 
   return (
     <div className="animate-slide-up space-y-6">
@@ -84,6 +88,7 @@ export default function Step4Results({ address, valuation, lead, onStartOver }: 
             </span>
           </h2>
 
+          {/* Beds/Baths/Sqft boxes — shown only if we have the data */}
           <div className="flex gap-2 flex-wrap mb-4">
             {valuation.pricePerSqft && (
               <span className="glass rounded-lg px-3 py-1 text-xs text-white/80 border border-white/10">
@@ -97,7 +102,7 @@ export default function Step4Results({ address, valuation, lead, onStartOver }: 
           <div className="flex gap-3 flex-wrap">
             <a
               href={CMA_URL}
-              className="gold-gradient text-white font-bold px-5 py-2.5 rounded-xl text-sm hover:opacity-90 transition-all shadow-lg shadow-gold/20"
+              className="gold-gradient text-navy font-bold px-5 py-2.5 rounded-xl text-sm hover:opacity-90 transition-all shadow-lg shadow-gold/20"
             >
               Get Full CMA →
             </a>
@@ -137,16 +142,25 @@ export default function Step4Results({ address, valuation, lead, onStartOver }: 
         <div className="glass rounded-xl p-4 text-center border border-white/10">
           <p className="text-white/40 text-xs uppercase tracking-wider mb-1">Est. Rent</p>
           <p className="text-white font-bold text-lg">{formatCurrency(suggestedRent)}</p>
-          <p className="text-white/30 text-xs mt-0.5">3BR HUD FMR</p>
+          <p className="text-white/30 text-xs mt-0.5">{rentLabel}</p>
         </div>
 
         {/* Value vs Median */}
         <div className="glass rounded-xl p-4 text-center border border-white/10">
           <p className="text-white/40 text-xs uppercase tracking-wider mb-1">vs. Area Median</p>
-          <p className={`font-bold text-lg ${valueChangePct >= 0 ? "text-green-400" : "text-red-400"}`}>
-            {valueChangePct >= 0 ? "+" : ""}{valueChangePct.toFixed(1)}%
-          </p>
-          <p className="text-white/30 text-xs mt-0.5">from zip median</p>
+          {valueChangePct !== null ? (
+            <>
+              <p className={`font-bold text-lg ${valueChangePct >= 0 ? "text-green-400" : "text-red-400"}`}>
+                {valueChangePct >= 0 ? "+" : ""}{valueChangePct.toFixed(1)}%
+              </p>
+              <p className="text-white/30 text-xs mt-0.5">vs. area income median</p>
+            </>
+          ) : (
+            <>
+              <p className="font-bold text-lg text-white/50">N/A</p>
+              <p className="text-white/30 text-xs mt-0.5">data unavailable</p>
+            </>
+          )}
         </div>
       </div>
 
@@ -279,42 +293,48 @@ export default function Step4Results({ address, valuation, lead, onStartOver }: 
       {/* ── 5. CTA — GET YOUR FREE CMA ──────────────────────────────── */}
       <div className="rounded-2xl p-6 md:p-8 border-2 border-gold/40 bg-gradient-to-br from-gold/10 to-navy">
         <div className="flex flex-col md:flex-row gap-5 md:gap-6">
-          {/* Avatar */}
+          {/* Headshot */}
           <div className="flex-shrink-0">
-            <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-gold/50 mx-auto md:mx-0 gold-gradient flex items-center justify-center">
-              <span className="text-white font-bold text-2xl">CM</span>
+            <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-gold/50 mx-auto md:mx-0">
+              <Image
+                src="/candee-headshot.png"
+                alt="Candee Currie"
+                fill
+                className="object-cover object-top"
+                sizes="96px"
+              />
             </div>
           </div>
 
           {/* Info */}
           <div className="flex-1 text-center md:text-left">
             <p className="text-gold/80 text-xs uppercase tracking-widest font-semibold mb-1">Your Local Expert</p>
-            <h3 className="text-white font-bold text-xl">Chad Morton</h3>
-            <p className="text-white/50 text-sm">Maverick Realty LLC</p>
+            <h3 className="text-white font-bold text-xl">Candee Currie</h3>
+            <p className="text-white/50 text-sm">TTR Sotheby&apos;s International Realty</p>
 
             <div className="flex flex-col md:flex-row gap-2 mt-3">
               <a
-                href="tel:+13023735929"
+                href="tel:+17032036005"
                 className="flex items-center justify-center md:justify-start gap-2 text-white/70 hover:text-gold transition-colors text-sm"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12 19.79 19.79 0 0 1 1.93 3.37 2 2 0 0 1 3.91 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                 </svg>
-                (302) 373-5929
+                (703) 203-6005
               </a>
               <a
-                href="mailto:chadmortonrealtor@gmail.com"
+                href="mailto:ccurrie@ttrsir.com"
                 className="flex items-center justify-center md:justify-start gap-2 text-white/70 hover:text-gold transition-colors text-sm"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                   <polyline points="22,6 12,13 2,6" />
                 </svg>
-                chadmortonrealtor@gmail.com
+                ccurrie@ttrsir.com
               </a>
             </div>
 
-            <p className="text-white/40 text-xs mt-2">VA Lic. 0225211286 · DC Lic. SP98373695 · MD Lic. 504467</p>
+            <p className="text-white/40 text-xs mt-2">VA License 0225203164</p>
           </div>
         </div>
 
@@ -327,15 +347,15 @@ export default function Step4Results({ address, valuation, lead, onStartOver }: 
           <div className="flex flex-col sm:flex-row gap-3">
             <a
               href={CMA_URL}
-              className="flex-1 gold-gradient text-white font-bold py-4 rounded-xl text-sm text-center transition-all hover:opacity-90 hover:scale-[1.01] shadow-lg shadow-gold/20"
+              className="flex-1 gold-gradient text-navy font-bold py-4 rounded-xl text-sm text-center transition-all hover:opacity-90 hover:scale-[1.01] shadow-lg shadow-gold/20"
             >
-              Request Free CMA from Chad →
+              Request Free CMA from Candee →
             </a>
             <a
-              href="tel:+13023735929"
+              href="tel:+17032036005"
               className="flex-1 bg-white/10 hover:bg-white/15 text-white font-semibold py-4 rounded-xl text-sm text-center transition-all border border-white/20 hover:border-white/40"
             >
-              📞 Call Chad
+              📞 Call Candee
             </a>
           </div>
         </div>
