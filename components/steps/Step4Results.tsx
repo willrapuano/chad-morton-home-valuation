@@ -94,9 +94,9 @@ export default function Step4Results({ address, valuation, lead, onStartOver }: 
 
   const CMA_SUBJECT = encodeURIComponent(`Free CMA Request — ${address.full}`);
   const CMA_BODY = encodeURIComponent(
-    `Hi Candee,\n\nI'd like to request a free CMA for ${address.full}.\n\nEmail: ${lead.email}\n\nThank you!`
+    `Hi Chad,\n\nI'd like to request a free CMA for ${address.full}.\n\nEmail: ${lead.email}\n\nThank you!`
   );
-  const CMA_URL = `mailto:ccurrie@ttrsir.com?subject=${CMA_SUBJECT}&body=${CMA_BODY}`;
+  const CMA_URL = `mailto:chadmortonrealtor@gmail.com?subject=${CMA_SUBJECT}&body=${CMA_BODY}`;
 
   const fmr = valuation.fmr ?? {
     studio: 2050,
@@ -377,7 +377,7 @@ export default function Step4Results({ address, valuation, lead, onStartOver }: 
           Want a precise valuation?
         </p>
         <p className="text-white/50 text-sm mb-6 text-center md:text-left">
-          A free CMA from Candee gives you an agent-prepared, market-specific value — often
+          A free CMA from Chad gives you an agent-prepared, market-specific value — often
           $20k–$40k more accurate than automated tools. No pressure, no obligation.
         </p>
 
@@ -387,7 +387,7 @@ export default function Step4Results({ address, valuation, lead, onStartOver }: 
             <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-gold/50">
               <Image
                 src="/candee-headshot.png"
-                alt="Candee Currie"
+                alt="Chad Currie"
                 fill
                 className="object-cover object-top"
                 sizes="80px"
@@ -400,7 +400,7 @@ export default function Step4Results({ address, valuation, lead, onStartOver }: 
             <p className="text-gold/80 text-xs uppercase tracking-widest font-semibold mb-0.5">
               Your Local Expert
             </p>
-            <h3 className="text-white font-bold text-lg">Candee Currie</h3>
+            <h3 className="text-white font-bold text-lg">Chad Currie</h3>
             <p className="text-white/50 text-sm">TTR Sotheby&apos;s International Realty</p>
             <p className="text-white/30 text-xs mt-0.5">VA License 0225203164</p>
 
@@ -412,17 +412,17 @@ export default function Step4Results({ address, valuation, lead, onStartOver }: 
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12 19.79 19.79 0 0 1 1.93 3.37 2 2 0 0 1 3.91 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                 </svg>
-                (703) 203-6005
+                (302) 373-5929
               </a>
               <a
-                href="mailto:ccurrie@ttrsir.com"
+                href="mailto:chadmortonrealtor@gmail.com"
                 className="flex items-center justify-center gap-2 text-white/60 hover:text-gold transition-colors text-sm"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                   <polyline points="22,6 12,13 2,6" />
                 </svg>
-                ccurrie@ttrsir.com
+                chadmortonrealtor@gmail.com
               </a>
             </div>
           </div>
@@ -439,7 +439,7 @@ export default function Step4Results({ address, valuation, lead, onStartOver }: 
             href="tel:+17032036005"
             className="flex-1 bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold py-4 rounded-xl text-sm text-center transition-all"
           >
-            📞 Call Candee
+            📞 Call Chad
           </a>
         </div>
       </div>
